@@ -57,6 +57,7 @@ LIB_SRC_C += $(addprefix lib/,\
 CUST_SRC_C += $(addprefix ports/esp32_embed/,\
 	esp32_partition.c \
 	modesp32.c \
+	embed_util.c \
 	)		
 
 # List of sources for qstr extraction
@@ -73,7 +74,7 @@ clean-micropython-embed-package:
 	$(RM) -rf $(PACKAGE_DIR)
 
 PACKAGE_DIR ?= micropython_embed
-PACKAGE_DIR_LIST = $(addprefix $(PACKAGE_DIR)/,py extmod shared/runtime genhdr port shared/readline shared/timeutils lib/littlefs lib/oofatfs)
+PACKAGE_DIR_LIST = $(addprefix $(PACKAGE_DIR)/,py extmod shared/runtime genhdr port shared/readline shared/timeutils lib/littlefs lib/oofatfs idf)
 
 .PHONY: micropython-embed-package
 micropython-embed-package: $(GENHDR_OUTPUT)
@@ -125,6 +126,11 @@ micropython-embed-package: $(GENHDR_OUTPUT)
 	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/modesp32.c $(PACKAGE_DIR)/port	
 	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/embed_util.c $(PACKAGE_DIR)/port	
 	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/micropython_embed.h $(PACKAGE_DIR)/port
+# https://github.com/espressif/esp-idf/blob/master/components/heap/multi_heap_platform.h custom port because not in clude in arduino framework	
+	$(ECHO) "- idf"  
+	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/heap_private.h $(PACKAGE_DIR)/idf
+	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/multi_heap_platform.h $(PACKAGE_DIR)/idf
+	
 
 
 # Include remaining core make rules.

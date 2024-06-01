@@ -8,6 +8,7 @@
         "timeutils.h": "c",
         "mphal.h": "c",
         "mphalport.h": "c",
-        "ringbuf.h": "c"
+        "ringbuf.h": "c",
+        "dynruntime.h": "c"
     }
 }

@@ -33,6 +33,10 @@
 #include "shared/runtime/gchelper.h"
 #include "port/micropython_embed.h"
 #include "esp32_partition.c"
+#ifdef MICROPY_CUST_IDF
+#include "esp_heap_caps.h"
+#endif
+
 
 // Initialise the runtime.
 void mp_embed_init(void *gc_heap, size_t gc_heap_size, void *stack_top) {
@@ -120,3 +124,22 @@ void __assert_func(const char *file, int line, const char *func, const char *exp
     }
 }
 #endif
+
+void *esp_native_code_commit(void *buf, size_t len, void *reloc) {
+    len = (len + 3) & ~3;
+    uint32_t *p = heap_caps_malloc(len, MALLOC_CAP_EXEC);
+    if (p == NULL) {
+        m_malloc_fail(len);
+    }
+    if (MP_STATE_PORT(native_code_pointers) == MP_OBJ_NULL) {
+        MP_STATE_PORT(native_code_pointers) = mp_obj_new_list(0, NULL);
+    }
+    mp_obj_list_append(MP_STATE_PORT(native_code_pointers), MP_OBJ_TO_PTR(p));
+    if (reloc) {
+        mp_native_relocate(reloc, buf, (uintptr_t)p);
+    }
+    memcpy(p, buf, len);
+    return p;
+}
+
+MP_REGISTER_ROOT_POINTER(mp_obj_t native_code_pointers);

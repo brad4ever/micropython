@@ -29,6 +29,9 @@
 #define MICROPY_PY_SYS_PLATFORM "esp32"
 
 #define MICROPY_MAKE_POINTER_CALLABLE(p) ((void *)((mp_uint_t)(p)))
+void *esp_native_code_commit(void *, size_t, void *);
+#define MP_PLAT_COMMIT_EXEC(buf, len, reloc) esp_native_code_commit(buf, len, reloc)
+#define MP_SSIZE_MAX (0x7fffffff)
 
 #define UINT_FMT "%u"
 #define INT_FMT "%d"
