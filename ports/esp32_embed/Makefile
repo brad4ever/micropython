@@ -9,6 +9,8 @@
 EMBED_DIR = micropython_embed
 PROG = embed
 
+source /root/esp/esp-idf/export.sh 
+
 CFLAGS += -I.
 CFLAGS += -I$(EMBED_DIR)
 CFLAGS += -I$(EMBED_DIR)/port

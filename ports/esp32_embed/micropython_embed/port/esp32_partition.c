@@ -28,7 +28,7 @@
 #include "py/runtime.h"
 #include "py/mperrno.h"
 #include "extmod/vfs.h"
-#include "mphalport.h"
+#include "port/mphalport.h"
 #include "modesp32.h"
 #if MICROPY_CUST_IDF
 #include "esp_partition.h"

@@ -127,3 +127,20 @@ void *esp_native_code_commit(void *, size_t, void *);
 #define MICROPY_PY_RANDOM_EXTRA_FUNCS (1)
 #define MICROPY_PY_FRAMEBUF (1)
 #define MICROPY_PY_PLATFORM (1)
+
+
+
+//Custom project define 
+#define MICROPY_HW_ENABLE_SDCARD (1)
+#define MICROPY_PY_MACHINE_BARE_METAL_FUNCS (0)
+#define MICROPY_PY_MACHINE (1)
+#define MICROPY_PY_MACHINE_MEMX (1)
+#define MICROPY_PY_MACHINE_SIGNAL (1)
+#define MICROPY_PY_MACHINE_INCLUDEFILE "ports/esp32_embed/modmachine.c"
+#define MICROPY_PY_MACHINE_SPI (1)
+#define MICROPY_PY_MACHINE_SPI_MSB (0)
+#define MICROPY_PY_MACHINE_SPI_LSB (1)
+#define MICROPY_PY_MACHINE_SOFTSPI (1)
+//#define MICROPY_HW_SOFTSPI_MIN_DELAY (0)
+//#define MICROPY_HW_SOFTSPI_MAX_BAUDRATE (esp_rom_get_cpu_ticks_per_us() * 1000000 / 200) // roughly
+#define MICROPY_BANNER_MACHINE "GG-ESP32"
