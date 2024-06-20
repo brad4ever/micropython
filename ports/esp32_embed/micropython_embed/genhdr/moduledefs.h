@@ -16,6 +16,10 @@ extern const struct _mp_obj_module_t mp_module_io;
 #undef MODULE_DEF_IO
 #define MODULE_DEF_IO { MP_ROM_QSTR(MP_QSTR_io), MP_ROM_PTR(&mp_module_io) },
 
+extern const struct _mp_obj_module_t mp_module_machine;
+#undef MODULE_DEF_MACHINE
+#define MODULE_DEF_MACHINE { MP_ROM_QSTR(MP_QSTR_machine), MP_ROM_PTR(&mp_module_machine) },
+
 extern const struct _mp_obj_module_t mp_module_os;
 #undef MODULE_DEF_OS
 #define MODULE_DEF_OS { MP_ROM_QSTR(MP_QSTR_os), MP_ROM_PTR(&mp_module_os) },
@@ -68,6 +72,7 @@ extern const struct _mp_obj_module_t mp_module_vfs;
     MODULE_DEF_COLLECTIONS \
     MODULE_DEF_ERRNO \
     MODULE_DEF_IO \
+    MODULE_DEF_MACHINE \
     MODULE_DEF_OS \
     MODULE_DEF_STRUCT \
 // MICROPY_REGISTERED_EXTENSIBLE_MODULES

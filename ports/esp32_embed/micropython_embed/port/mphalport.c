@@ -32,19 +32,59 @@
 #include "py/mperrno.h"
 #include "py/nlr.h"
 #include "py/runtime.h"
+#include <stdarg.h>
 
-typedef void (*callback_Extern_t) (void* context,const char *str, size_t len);
-//Function pointer 
-void (*callback_Extern) (void* context,const char *str, size_t len) = NULL;
 //Context of callback
-void* _context = NULL;
+void* _m_context = NULL;
 
+typedef void (*cb_Extern_StdOut_ptr) (void* context,const char *str, size_t len);
+typedef uint8_t (*cb_Extern_PinInterface_ptr)(void* context, va_list);
+
+//Function pointer 
+void (*pyCb_StdOutWrapper) (void* context,const char *str, size_t len) = NULL;
+uint8_t (*pyCb_PinWrapper)(void* context, va_list)=NULL;
+
+uint8_t call_pyCb_PinWrapper(void* context, cb_Extern_PinInterface_ptr func, ...) {
+    uint8_t value;
+
+    va_list args;
+    va_start(args, func);
+    value = func(context, args);
+    va_end(args);
+
+    return value;
+}
+
+void register_cb_hal_pinWrapper(cb_Extern_PinInterface_ptr fun){
+    pyCb_PinWrapper=fun;
+}
+
+
+void mp_hal_pin_op(uint16_t op,uint8_t index, mp_arg_val_t* args){
+    enum { ARG_mode, ARG_pull, ARG_value, ARG_drive, ARG_hold };
+    switch (op) {
+        case MP_QSTR_init:            
+            call_pyCb_PinWrapper(_m_context, pyCb_PinWrapper, op,index, args[ARG_mode].u_int, args[ARG_pull].u_int, args[ARG_value].u_int, args[ARG_drive].u_int, args[ARG_hold].u_int);
+            break;
+        case MP_QSTR_value:
+        case MP_QSTR_off:
+        case MP_QSTR_on:
+            call_pyCb_PinWrapper(_m_context, pyCb_PinWrapper, op,index, args[0].u_int);
+            break;
+        case MP_QSTR_irq:
+            break;
+    }    
+}
+
+uint8_t mp_hal_pin_value(uint8_t index,uint8_t value){
+    return call_pyCb_PinWrapper(_m_context, pyCb_PinWrapper, MP_QSTR_value,index, value);
+}
 
 // Send string of given length to stdout, converting \n to \r\n.
 void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
     fflush(stdout); 
-    if (callback_Extern != NULL && _context != NULL){
-        callback_Extern(_context,str, len);
+    if (pyCb_StdOutWrapper != NULL && _m_context != NULL){
+        pyCb_StdOutWrapper(_m_context,str, len);
     }
     else {
         printf("%.*s", (int)len, str);
@@ -52,13 +92,16 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
 }
 
 
-void register_cb_hal_stdout(callback_Extern_t fun, void* context){
-    callback_Extern = fun;
-    _context = context;
+void register_cb_hal_stdout(cb_Extern_StdOut_ptr fun){
+    pyCb_StdOutWrapper = fun;
 }
+ 
 void deregister_cb_hal_stdout(){
-    callback_Extern = NULL;
-    _context = NULL;
+    pyCb_StdOutWrapper = NULL;
+}
+
+void register_cb_hal_machine_context(void* m_context){
+    _m_context = m_context;
 }
 
 uint64_t mp_hal_time_ns(void) {

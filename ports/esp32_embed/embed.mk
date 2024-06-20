@@ -47,6 +47,7 @@ EXTMOD_SRC_C += $(addprefix extmod/,\
 	vfs_reader.c \
 	vfs_lfsx.c \
 	vfs_lfsx_file.c \
+	virtpin.c \
 	)	
 
 LIB_SRC_C += $(addprefix lib/,\
@@ -58,6 +59,9 @@ CUST_SRC_C += $(addprefix ports/esp32_embed/,\
 	esp32_partition.c \
 	modesp32.c \
 	embed_util.c \
+	modmachine.c \
+	machine_pin.c \
+	pins.c \
 	)		
 
 # List of sources for qstr extraction
@@ -98,6 +102,8 @@ micropython-embed-package: $(GENHDR_OUTPUT)
 	$(Q)$(CP) $(MICROPYTHON_TOP)/extmod/vfs_fat.c $(PACKAGE_DIR)/extmod		
 	$(Q)$(CP) $(MICROPYTHON_TOP)/extmod/vfs_lfsx.c $(PACKAGE_DIR)/extmod				
 	$(Q)$(CP) $(MICROPYTHON_TOP)/extmod/vfs_lfsx_file.c $(PACKAGE_DIR)/extmod	
+	$(Q)$(CP) $(MICROPYTHON_TOP)/extmod/virtpin.h $(PACKAGE_DIR)/extmod	
+	$(Q)$(CP) $(MICROPYTHON_TOP)/extmod/virtpin.h $(PACKAGE_DIR)/extmod		
 	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/vfs_posix.h $(PACKAGE_DIR)/extmod		
 	$(ECHO) "- lib"
 	$(Q)$(CP) $(MICROPYTHON_TOP)/lib/littlefs/lfs2.h $(PACKAGE_DIR)/lib/littlefs
@@ -117,6 +123,7 @@ micropython-embed-package: $(GENHDR_OUTPUT)
 	$(Q)$(CP) $(MICROPYTHON_TOP)/shared/timeutils/timeutils.h $(PACKAGE_DIR)/shared/timeutils		
 	$(ECHO) "- genhdr"
 	$(Q)$(CP) $(GENHDR_OUTPUT) $(PACKAGE_DIR)/genhdr
+	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/pins.h $(PACKAGE_DIR)/genhdr
 	$(ECHO) "- port"
 	$(Q)$(CP) $(MICROPYTHON_EMBED_PORT)/port/*.[ch] $(PACKAGE_DIR)/port
 	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/mphalport.h $(PACKAGE_DIR)/port/
@@ -124,7 +131,12 @@ micropython-embed-package: $(GENHDR_OUTPUT)
 	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/esp32_partition.c $(PACKAGE_DIR)/port	
 	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/modesp32.h $(PACKAGE_DIR)/port	
 	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/modesp32.c $(PACKAGE_DIR)/port	
+	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/modmachine.h $(PACKAGE_DIR)/port	
+	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/modmachine.c $(PACKAGE_DIR)/port	
+	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/machine_pin.h $(PACKAGE_DIR)/port	
+	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/machine_pin.c $(PACKAGE_DIR)/port	
 	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/embed_util.c $(PACKAGE_DIR)/port	
+	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/pins.c $(PACKAGE_DIR)/port	
 	$(Q)$(CP) $(MICROPYTHON_TOP)/ports/esp32_embed/micropython_embed.h $(PACKAGE_DIR)/port
 # https://github.com/espressif/esp-idf/blob/master/components/heap/multi_heap_platform.h custom port because not in clude in arduino framework	
 	$(ECHO) "- idf"  

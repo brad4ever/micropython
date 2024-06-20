@@ -32,6 +32,7 @@
 #include "py/obj.h"
 #include "py/runtime.h"
 #include "py/mphal.h"
+#include "modmachine.h"
 #include "modesp32.h"
 #ifdef MICROPY_CUST_IDF
 #include "esp_heap_caps.h"
